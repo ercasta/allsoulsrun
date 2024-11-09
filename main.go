@@ -1,7 +1,7 @@
 package main
 
 import (
-	"allsoulsrun/allsouls"
+	"github.com/ercasta/allsoulsrun/pkg/allsouls"
 )
 
 func main() {
