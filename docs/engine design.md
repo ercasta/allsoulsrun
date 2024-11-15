@@ -2,7 +2,7 @@
 
 ## Characters and Stats
 
-All characters have stats:
+All characters have stats, e.g.:
 
 - Strength
 - Dexterity
@@ -45,7 +45,7 @@ Game is continuous in game time. A Character starts in town. He can then telepor
 
 ## Future improvements
 
-Acts, Stash, Inventory
+Acts, Stash, Inventory, Skill Tree
 
 ## Event Timeline
 
@@ -57,21 +57,21 @@ Example:
 - "Explode" is put on the event timeline when a trap is placed.
 
 
-## Event Stack
-Once an event "happens", it is put on a "resolution stack". This might trigger other events, that are put on top of the stack. When no other events are triggered, the event on the top is "popped" and it applies its effetcs. Again, this might trigger other events, which are stacked. This goes on until the stack is empty. Note that stack resolution happens virtually in the exact game time instant.
+## Effect Stack
+Once an event "happens", it puts an effect on a "resolution stack". This might trigger other effects, that are put on top of the stack. When no other effects are triggered, the effects on the top is "popped" and it applies its effects. Again, this might trigger other effects, which are stacked. This goes on until the stack is empty. Note that stack resolution happens virtually in the exact game time instant.
 
 Example:
-- "Attack" event is put on stack. This triggers a defensive "magic wall" ability from the opponent, so
-- "Magic Wall" event is put on the stack. This ability prevents the attack to have place, so
-- "Attack cancel" event is put on stack. 
+- "Damage" effect is put on stack. This triggers a defensive "magic wall" ability from the opponent, so
+- "Magic Wall" event is put on the stack. This ability prevents the damage to be inflicted, so
+- "Damage cancel" effects is put on stack. 
 
 Then stack is resolved:
-- "Attack cancel" is applied. This flags the "Attack" event in the event as "canceled".
-- "Magic Wall" applies. Actually, this event does nothing when applied. Its only reason to exist is to put other events on the stack
-- "Attack" is canceled; so apply does nothing.
+- "Damage cancel" is applied. This flags the "Damage" effect as "canceled".
+- "Magic Wall" applies. Actually, this effect does nothing when applied. Its only reason to exist is to put other effects on the stack, to allow counter-effects
+- "Damage" is canceled; so apply does nothing.
 
 
 ## Technical notes: Observer pattern
 
-Event Timeline and Event Stack are based on the Observer pattern. All changes to these structure is notified to listener: this allows creating new events that trigger in specific conditions
+Event Timeline and Effect Stack are based on the Observer pattern. All changes to these structure is notified to listener: this allows creating new events that trigger in specific conditions
 
