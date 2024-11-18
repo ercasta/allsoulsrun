@@ -23,7 +23,7 @@ func (a *AttackEvent) Scheduled(t *engine.Timeline) {}
 
 func (a *AttackEvent) Happen(t *engine.Timeline) {
 	if !a.canceled {
-		t.Game.EffectStack.StackEffect(&ef.Damage{Damaged: a.Attacked})
+		t.Game.EffectStack.StackEffect(&ef.Damage{Damaged: a.Attacked, Fight: a.Fight})
 	}
 }
 

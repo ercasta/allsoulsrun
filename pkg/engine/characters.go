@@ -1,5 +1,7 @@
 package engine
 
+var uuid uint64 = 0
+
 type CharacterEnergyLevels struct {
 	Health int
 	Mana   int
@@ -21,6 +23,7 @@ type CharacterExperience struct {
 }
 
 type Character struct {
+	UUID   uint64
 	Name   string
 	Exp    CharacterExperience
 	Stats  CharacterStats
@@ -28,7 +31,9 @@ type Character struct {
 }
 
 func NewCharacter(name string, level, exp, nextLevelExp, strength, dexterity, intelligence, constitution, health, mana int) Character {
+	uuid++
 	return Character{
+		UUID: uuid,
 		Name: name,
 		Exp: CharacterExperience{
 			Level:        level,

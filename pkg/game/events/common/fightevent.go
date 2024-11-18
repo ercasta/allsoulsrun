@@ -14,26 +14,21 @@ const FIGHT_EVENT = "Fight"
 
 type FightEvent struct {
 	Fight *c.Fight
-	sides map[c.Side][]engine.Character
 }
 
 func (f *FightEvent) GetType() engine.EventType { return FIGHT_EVENT }
 
 func (f *FightEvent) Happen(t *engine.Timeline) {
-	if f.sides == nil {
-		f.sides = make(map[c.Side][]engine.Character)
+	f.Fight = &c.Fight{}
+	for _, fighter := range t.World.Characters {
+		f.Fight.AddFighter(&fighter, SIDE_CHARACTERS)
 	}
 
-	f.sides[SIDE_CHARACTERS] = t.World.Characters
-	f.sides[SIDE_MONSTERS] =
-		[]engine.Character{
-			engine.NewCharacter("Goblin", 1, 0, 50, 5, 5, 5, 5, 30, 0),
-			engine.NewCharacter("Orc", 1, 0, 150, 15, 10, 10, 10, 70, 0),
-		}
+	var opp = engine.NewCharacter("Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0)
+	f.Fight.AddFighter(&opp, SIDE_MONSTERS)
+	var opp2 = engine.NewCharacter("Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0)
+	f.Fight.AddFighter(&opp2, SIDE_MONSTERS)
 
-	// Roll for initiative and create initial events.
-	t.AddEvent(&AttackEvent{Attacker: &f.sides[SIDE_CHARACTERS][0], Attacked: &f.sides[SIDE_MONSTERS][0], Fight: f.Fight}, 2000)
-	t.AddEvent(&AttackEvent{Attacker: &f.sides[SIDE_MONSTERS][0], Attacked: &f.sides[SIDE_CHARACTERS][0], Fight: f.Fight}, 2500)
 }
 
 func Scheduled(t *engine.Timeline) {}

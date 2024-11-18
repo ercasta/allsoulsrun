@@ -4,7 +4,7 @@ type EffectType string
 
 type Effecter interface {
 	GetType() EffectType
-	Apply()
+	Apply(*EffectStack)
 	Cancel()
 }
 
@@ -42,7 +42,7 @@ func (es *EffectStack) AddListener(l EffectListener) {
 func (es *EffectStack) Resolve() {
 	for len(es.Effects) != 0 {
 		e := es.PopEffect()
-		e.Apply()
+		e.Apply(es)
 		if es.listeners != nil {
 			for _, l := range es.listeners[e.GetType()] {
 				l.onApply(e)

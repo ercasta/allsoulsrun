@@ -3,6 +3,7 @@ package run
 import (
 	"github.com/ercasta/allsoulsrun/pkg/engine"
 	ev "github.com/ercasta/allsoulsrun/pkg/game/events/common"
+	a "github.com/ercasta/allsoulsrun/pkg/game/events/listeners"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +12,10 @@ func NewRun() {
 	newgame.Init()
 	var archer engine.Character = engine.NewCharacter("Legolas", 1, 0, 100, 10, 20, 5, 10, 100, 50)
 	newgame.World.AddCharacter(archer)
-	newgame.Timeline.AddEvent(&ev.FightEvent{}, 0)
+	var fightevent = ev.FightEvent{}
+	newgame.Timeline.AddEvent(&fightevent, 0)
+	newgame.Timeline.AddEventListener(ev.AttackEventId, &a.AttackScheduler{})
+	newgame.Timeline.AddEventListener(ev.FIGHT_EVENT, &a.AttackScheduler{})
 	newgame.Run()
 }
 

@@ -10,6 +10,7 @@ type TimedEvent struct {
 }
 
 type Timeline struct {
+	CurrentTime    uint64
 	events         []TimedEvent
 	eventListeners map[EventType][]EventListener
 	World          *World
@@ -56,7 +57,9 @@ func (t *Timeline) RunNextEvent() {
 	if len(t.events) == 0 {
 		return
 	}
-	e := t.events[t.findNextIdx()].Event
+	var nextId = t.findNextIdx()
+	e := t.events[nextId].Event
+	t.CurrentTime = t.events[nextId].StartTime
 	t.events = t.events[1:]
 	e.Happen(t)
 	t.Game.EffectStack.Resolve()
