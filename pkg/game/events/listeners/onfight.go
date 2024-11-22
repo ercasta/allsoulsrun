@@ -19,7 +19,7 @@ func (oar OnFight) scheduleNewAttackToFirstOpponent(attacker e.EntityID, fight e
 }
 
 func (oar OnFight) OnEvent(e e.Eventer, t *e.Timeline) {
-	fight := e.(*a.FightEvent)
+	fight := e.(a.FightEvent)
 	fightcomponent := t.Game.GetComponent(fight.Fight, gamecommon.Fight{}.GetComponentType()).(gamecommon.Fight)
 	fighters := fightcomponent.GetFighters()
 	for _, fighter := range fighters {

@@ -27,7 +27,7 @@ type DamageListener struct{}
 func (dl DamageListener) OnApply(ef e.Effecter, es *e.EffectStack) {
 	var g = es.Game
 	var elcomponent, statscomponent e.Componenter
-	d := ef.(*Damage)
+	d := ef.(Damage)
 	damageAmount := rand.Intn(5) + 1
 	elcomponent = g.GetComponent(d.Damaged, gamecommon.CharacterEnergyLevels{}.GetComponentType())
 	statscomponent = g.GetComponent(d.Damaged, gamecommon.CharacterStats{}.GetComponentType())

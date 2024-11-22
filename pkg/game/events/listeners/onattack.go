@@ -20,12 +20,12 @@ func (oar AttackScheduler) scheduleNewAttackToFirstOpponent(attacker e.EntityID,
 }
 
 func (oar AttackScheduler) reschedule(e e.Eventer, t *e.Timeline) {
-	attackevent := e.(*a.AttackEvent)
+	attackevent := e.(a.AttackEvent)
 	oar.scheduleNewAttackToFirstOpponent(attackevent.Attacker, attackevent.Fight, t)
 }
 
 func (oar AttackScheduler) OnEvent(e e.Eventer, t *e.Timeline) {
-	attackevent := e.(*a.AttackEvent)
+	attackevent := e.(a.AttackEvent)
 	t.Game.EffectStack.StackEffect(ef.Damage{Damaged: attackevent.Attacked, Fight: attackevent.Fight})
 }
 

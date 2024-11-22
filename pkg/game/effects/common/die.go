@@ -23,7 +23,7 @@ type DieListener struct{}
 func (d DieListener) OnApply(e e.Effecter, es *e.EffectStack) {
 	var dievent = e.(*Die)
 
-	println(" d.Dead: ", gamecommon.GetName(dievent.Dead, es.Game), " is dead")
+	println(gamecommon.GetName(dievent.Dead, es.Game), "is dead")
 	fight := es.Game.GetComponent(dievent.Fight, gamecommon.Fight{}.GetComponentType()).(gamecommon.Fight)
 	fight.RemoveFighter(dievent.Dead)
 	es.Game.SetComponent(dievent.Fight, fight)

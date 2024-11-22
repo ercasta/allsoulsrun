@@ -62,7 +62,11 @@ func (t *Timeline) RunNextEvent() {
 		}
 	}
 	t.Game.EffectStack.Resolve()
-
+	if t.eventListeners != nil {
+		for _, l := range t.eventListeners[e.GetType()] {
+			l.After(e, t)
+		}
+	}
 }
 
 func (t *Timeline) NextEvent() Eventer {

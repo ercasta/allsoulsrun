@@ -29,8 +29,8 @@ func NewRun() {
 
 	// Whoever wants to mod the game, will need to add new listeners and events.
 	newgame.Timeline.AddEvent(fightevent, 0)
-	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), &a.AttackScheduler{})
-	newgame.Timeline.AddEventListener(fightevent.GetType(), &a.AttackScheduler{})
+	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), a.AttackScheduler{})
+	newgame.Timeline.AddEventListener(fightevent.GetType(), a.OnFight{})
 
 	newgame.EffectStack.AddListener(ef.Die{}.GetType(), ef.DieListener{})
 	newgame.EffectStack.AddListener(ef.Damage{}.GetType(), ef.DamageListener{})
