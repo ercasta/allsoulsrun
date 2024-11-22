@@ -4,18 +4,19 @@ type EffectType string
 
 type Effecter interface {
 	GetType() EffectType
-	Apply(*EffectStack)
-	Cancel()
+	// Apply(*EffectStack)
+	// Cancel()
 }
 
 type EffectListener interface {
-	onStack(Effecter)
-	onPop(Effecter)
-	onCancel(Effecter)
-	onApply(Effecter)
+	OnStack(Effecter, *EffectStack)
+	OnPop(Effecter, *EffectStack)
+	OnCancel(Effecter, *EffectStack)
+	OnApply(Effecter, *EffectStack)
 }
 
 type EffectStack struct {
+	Game      *Game
 	Effects   []Effecter
 	listeners map[EffectType][]EffectListener
 }
@@ -33,19 +34,37 @@ func (es *EffectStack) PopEffect() Effecter {
 	return e
 }
 
-func (es *EffectStack) AddListener(l EffectListener) {
-	for EffectType := range es.listeners {
-		es.listeners[EffectType] = append(es.listeners[EffectType], l)
+func (es *EffectStack) CancelEffect(e Effecter) {
+	if len(es.Effects) == 0 {
+		return
 	}
+	for i, l := range es.Effects {
+		if l == e {
+			if es.listeners != nil {
+				for _, l := range es.listeners[e.GetType()] {
+					l.OnCancel(e, es)
+				}
+			}
+			es.Effects = append(es.Effects[:i], es.Effects[i+1:]...)
+			return
+		}
+	}
+}
+
+func (es *EffectStack) AddListener(et EffectType, l EffectListener) {
+	if es.listeners == nil {
+		es.listeners = make(map[EffectType][]EffectListener, 100)
+	}
+	es.listeners[et] = append(es.listeners[et], l)
 }
 
 func (es *EffectStack) Resolve() {
 	for len(es.Effects) != 0 {
 		e := es.PopEffect()
-		e.Apply(es)
+		//e.Apply(es)
 		if es.listeners != nil {
 			for _, l := range es.listeners[e.GetType()] {
-				l.onApply(e)
+				l.OnApply(e, es)
 			}
 		}
 	}

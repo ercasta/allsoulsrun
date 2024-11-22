@@ -2,8 +2,6 @@ package common
 
 import (
 	"github.com/ercasta/allsoulsrun/pkg/engine"
-	c "github.com/ercasta/allsoulsrun/pkg/game/common"
-	ef "github.com/ercasta/allsoulsrun/pkg/game/effects/common"
 )
 
 const (
@@ -11,22 +9,18 @@ const (
 )
 
 type AttackEvent struct {
-	Attacker *engine.Character
-	Attacked *engine.Character
-	Fight    *c.Fight
-	canceled bool
+	Attacker engine.EntityID
+	Attacked engine.EntityID
+	Fight    engine.EntityID
 }
 
-func (a *AttackEvent) GetType() engine.EventType { return AttackEventId }
+func (a AttackEvent) GetType() engine.EventType { return AttackEventId }
 
-func (a *AttackEvent) Scheduled(t *engine.Timeline) {}
+func (a AttackEvent) Scheduled(t *engine.Timeline) {}
 
-func (a *AttackEvent) Happen(t *engine.Timeline) {
-	if !a.canceled {
-		t.Game.EffectStack.StackEffect(&ef.Damage{Damaged: a.Attacked, Fight: a.Fight})
-	}
+func (a AttackEvent) Happen(t *engine.Timeline) {
+
 }
 
-func (a *AttackEvent) Cancel(t *engine.Timeline) {
-	a.canceled = true
+func (a AttackEvent) Cancel(t *engine.Timeline) {
 }

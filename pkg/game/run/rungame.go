@@ -2,6 +2,8 @@ package run
 
 import (
 	"github.com/ercasta/allsoulsrun/pkg/engine"
+	game "github.com/ercasta/allsoulsrun/pkg/game/common"
+	ef "github.com/ercasta/allsoulsrun/pkg/game/effects/common"
 	ev "github.com/ercasta/allsoulsrun/pkg/game/events/common"
 	a "github.com/ercasta/allsoulsrun/pkg/game/events/listeners"
 	"github.com/gin-gonic/gin"
@@ -10,12 +12,29 @@ import (
 func NewRun() {
 	var newgame engine.Game = engine.Game{}
 	newgame.Init()
-	var archer engine.Character = engine.NewCharacter("Legolas", 1, 0, 100, 10, 20, 5, 10, 100, 50)
-	newgame.World.AddCharacter(archer)
+	var world = newgame.CreateEntity()
+	worldcomp := game.World{}
+	worldcomp.AddCharacter(game.NewCharacter(&newgame, "Legolas", 1, 0, 100, 10, 20, 5, 10, 100, 50))
+	newgame.SetComponent(world, worldcomp)
+
 	var fightevent = ev.FightEvent{}
-	newgame.Timeline.AddEvent(&fightevent, 0)
-	newgame.Timeline.AddEventListener(ev.AttackEventId, &a.AttackScheduler{})
-	newgame.Timeline.AddEventListener(ev.FIGHT_EVENT, &a.AttackScheduler{})
+	fightevent.Fight = newgame.CreateEntity()
+	fight := game.Fight{}
+	fight.AddFighter(worldcomp.Characters[0], game.SIDE_CHARACTERS)
+
+	fight.AddFighter(game.NewCharacter(&newgame, "Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0), game.SIDE_MONSTERS)
+	fight.AddFighter(game.NewCharacter(&newgame, "Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0), game.SIDE_MONSTERS)
+
+	newgame.SetComponent(fightevent.Fight, fight)
+
+	// Whoever wants to mod the game, will need to add new listeners and events.
+	newgame.Timeline.AddEvent(fightevent, 0)
+	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), &a.AttackScheduler{})
+	newgame.Timeline.AddEventListener(fightevent.GetType(), &a.AttackScheduler{})
+
+	newgame.EffectStack.AddListener(ef.Die{}.GetType(), ef.DieListener{})
+	newgame.EffectStack.AddListener(ef.Damage{}.GetType(), ef.DamageListener{})
+
 	newgame.Run()
 }
 

@@ -2,7 +2,7 @@ package common
 
 import (
 	e "github.com/ercasta/allsoulsrun/pkg/engine"
-	c "github.com/ercasta/allsoulsrun/pkg/game/common"
+	gamecommon "github.com/ercasta/allsoulsrun/pkg/game/common"
 )
 
 const (
@@ -10,23 +10,28 @@ const (
 )
 
 type Die struct {
-	Dead      *e.Character
-	Fight     *c.Fight
-	cancelled bool
+	Dead  e.EntityID
+	Fight e.EntityID
 }
 
-func (d *Die) GetType() e.EffectType {
+func (d Die) GetType() e.EffectType {
 	return DIE
 }
 
-func (d *Die) Apply(es *e.EffectStack) {
-	if !d.cancelled {
-		println(" d.Dead: ", d.Dead, " is dead")
-		d.Fight.RemoveFighter(d.Dead)
-	}
+type DieListener struct{}
+
+func (d DieListener) OnApply(e e.Effecter, es *e.EffectStack) {
+	var dievent = e.(*Die)
+
+	println(" d.Dead: ", gamecommon.GetName(dievent.Dead, es.Game), " is dead")
+	fight := es.Game.GetComponent(dievent.Fight, gamecommon.Fight{}.GetComponentType()).(gamecommon.Fight)
+	fight.RemoveFighter(dievent.Dead)
+	es.Game.SetComponent(dievent.Fight, fight)
+
 }
 
-func (d *Die) Cancel() {
-	// Implementation for canceling the effect
-	d.cancelled = true
-}
+func (d DieListener) OnStack(e e.Effecter, es *e.EffectStack) {}
+
+func (d DieListener) OnPop(e e.Effecter, es *e.EffectStack) {}
+
+func (d DieListener) OnCancel(e e.Effecter, es *e.EffectStack) {}

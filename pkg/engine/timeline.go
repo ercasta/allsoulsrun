@@ -4,27 +4,21 @@ import (
 	"math"
 )
 
+type GameTime uint64
+
 type TimedEvent struct {
-	StartTime uint64
+	StartTime GameTime
 	Event     Eventer
 }
 
 type Timeline struct {
-	CurrentTime    uint64
+	CurrentTime    GameTime
 	events         []TimedEvent
 	eventListeners map[EventType][]EventListener
-	World          *World
 	Game           *Game
 }
 
-type EventListener interface {
-	// Called after events happen
-	OnEvent(e Eventer, t *Timeline)
-	OnScheduled(e Eventer, t *Timeline)
-	OnCancel(e Eventer, t *Timeline)
-}
-
-func (t *Timeline) AddEvent(e Eventer, time uint64) {
+func (t *Timeline) AddEvent(e Eventer, time GameTime) {
 	// TODO: sort events by time
 	t.events = append(t.events, TimedEvent{time, e})
 }
@@ -41,7 +35,7 @@ func (t *Timeline) isFinished() bool {
 }
 
 func (t *Timeline) findNextIdx() int {
-	var smallest uint64
+	var smallest GameTime
 	var idx int
 	smallest = math.MaxUint64
 	for i, e := range t.events {
@@ -61,13 +55,14 @@ func (t *Timeline) RunNextEvent() {
 	e := t.events[nextId].Event
 	t.CurrentTime = t.events[nextId].StartTime
 	t.events = t.events[1:]
-	e.Happen(t)
-	t.Game.EffectStack.Resolve()
+	//e.Happen(t)
 	if t.eventListeners != nil {
 		for _, l := range t.eventListeners[e.GetType()] {
 			l.OnEvent(e, t)
 		}
 	}
+	t.Game.EffectStack.Resolve()
+
 }
 
 func (t *Timeline) NextEvent() Eventer {

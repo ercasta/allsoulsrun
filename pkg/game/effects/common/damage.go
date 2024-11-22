@@ -4,8 +4,9 @@ import (
 	"fmt"
 	rand "math/rand"
 
+	"github.com/ercasta/allsoulsrun/pkg/engine"
 	e "github.com/ercasta/allsoulsrun/pkg/engine"
-	f "github.com/ercasta/allsoulsrun/pkg/game/common"
+	gamecommon "github.com/ercasta/allsoulsrun/pkg/game/common"
 )
 
 const (
@@ -13,27 +14,37 @@ const (
 )
 
 type Damage struct {
-	Damaged   *e.Character
-	Fight     *f.Fight
-	cancelled bool
+	Damaged engine.EntityID
+	Fight   engine.EntityID
 }
 
-func (d *Damage) GetType() e.EffectType {
+func (d Damage) GetType() e.EffectType {
 	return DAMAGE
 }
 
-func (d *Damage) Apply(es *e.EffectStack) {
-	if !d.cancelled {
-		damageAmount := rand.Intn(5) + 1
-		d.Damaged.Energy.Health -= damageAmount
-		fmt.Printf("%s has %d health left after taking %d damage\n", d.Damaged.Name, d.Damaged.Energy.Health, damageAmount)
-		if d.Damaged.Energy.Health <= 0 {
-			es.StackEffect(&Die{Dead: d.Damaged, Fight: d.Fight})
-		}
+type DamageListener struct{}
+
+func (dl DamageListener) OnApply(ef e.Effecter, es *e.EffectStack) {
+	var g = es.Game
+	var elcomponent, statscomponent e.Componenter
+	d := ef.(*Damage)
+	damageAmount := rand.Intn(5) + 1
+	elcomponent = g.GetComponent(d.Damaged, gamecommon.CharacterEnergyLevels{}.GetComponentType())
+	statscomponent = g.GetComponent(d.Damaged, gamecommon.CharacterStats{}.GetComponentType())
+	el := elcomponent.(gamecommon.CharacterEnergyLevels)
+	name := statscomponent.(gamecommon.CharacterStats)
+	el.Health -= damageAmount
+	g.SetComponent(d.Damaged, el)
+	fmt.Printf("%s has %d health left after taking %d damage\n", name.Name, el.Health, damageAmount)
+	if el.Health <= 0 {
+		es.StackEffect(&Die{Dead: d.Damaged, Fight: d.Fight})
 	}
+
 }
 
-func (d *Damage) Cancel() {
+func (dl DamageListener) OnCancel(ef e.Effecter, es *e.EffectStack) {
 	// Implementation for canceling the effect
-	d.cancelled = true
 }
+
+func (dl DamageListener) OnStack(ef e.Effecter, es *e.EffectStack) {}
+func (dl DamageListener) OnPop(ef e.Effecter, es *e.EffectStack)   {}
