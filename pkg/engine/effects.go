@@ -68,4 +68,5 @@ func (es *EffectStack) Resolve() {
 			}
 		}
 	}
+	//fmt.Println("Number of remaining effects:", len(es.Effects))
 }

@@ -1,6 +1,9 @@
 package listeners
 
 import (
+	"fmt"
+	rand "math/rand"
+
 	e "github.com/ercasta/allsoulsrun/pkg/engine"
 	gamecommon "github.com/ercasta/allsoulsrun/pkg/game/common"
 	ef "github.com/ercasta/allsoulsrun/pkg/game/effects/common"
@@ -14,7 +17,14 @@ func (oar AttackScheduler) scheduleNewAttackToFirstOpponent(attacker e.EntityID,
 	fighcomponent := g.GetComponent(fight, gamecommon.Fight{}.GetComponentType()).(gamecommon.Fight)
 	var opponents = fighcomponent.GetOpponents(attacker)
 	if len(opponents) > 0 {
-		t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight}, t.CurrentTime+2000)
+		stats := g.GetComponent(attacker, gamecommon.CharacterStats{}.GetComponentType()).(gamecommon.CharacterStats)
+		waitTime := int(1000 * (20 / stats.Dexterity))
+		newTime := t.CurrentTime + e.GameTime(waitTime)
+		// fmt.Printf("%s will attack at %d milliseconds\n", stats.Name, newTime)
+		t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight, SecondAttack: false}, newTime)
+		if rand.Float64() > 0.9 {
+			t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight, SecondAttack: true}, newTime)
+		}
 	}
 
 }
@@ -26,7 +36,20 @@ func (oar AttackScheduler) reschedule(e e.Eventer, t *e.Timeline) {
 
 func (oar AttackScheduler) OnEvent(e e.Eventer, t *e.Timeline) {
 	attackevent := e.(a.AttackEvent)
-	t.Game.EffectStack.StackEffect(ef.Damage{Damaged: attackevent.Attacked, Fight: attackevent.Fight})
+	stats := t.Game.GetComponent(attackevent.Attacker, gamecommon.CharacterStats{}.GetComponentType()).(gamecommon.CharacterStats)
+	damage := stats.Strength/10 + rand.Intn(3) + 1
+	fight := t.Game.GetComponent(attackevent.Fight, gamecommon.Fight{}.GetComponentType()).(gamecommon.Fight)
+	if fight.IsInFight(attackevent.Attacked) && fight.IsInFight(attackevent.Attacker) {
+		opponentstats := t.Game.GetComponent(attackevent.Attacked, gamecommon.CharacterStats{}.GetComponentType()).(gamecommon.CharacterStats)
+		var issecondattack string
+		if attackevent.SecondAttack {
+			issecondattack = "It's a double attack!!!"
+		} else {
+			issecondattack = ""
+		}
+		fmt.Printf("%s attacks %s dealing %d damage. %s \n", stats.Name, opponentstats.Name, damage, issecondattack)
+		t.Game.EffectStack.StackEffect(ef.Damage{Damaged: attackevent.Attacked, Fight: attackevent.Fight, Damageamount: damage})
+	}
 }
 
 func (oar AttackScheduler) OnCancel(e e.Eventer, t *e.Timeline) {
@@ -38,5 +61,8 @@ func (oar AttackScheduler) OnScheduled(e e.Eventer, t *e.Timeline) {
 }
 
 func (oar AttackScheduler) After(e e.Eventer, t *e.Timeline) {
-	oar.reschedule(e, t)
+	attackevent := e.(a.AttackEvent)
+	if !attackevent.SecondAttack {
+		oar.reschedule(e, t)
+	}
 }

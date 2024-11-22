@@ -54,8 +54,12 @@ func (t *Timeline) RunNextEvent() {
 	var nextId = t.findNextIdx()
 	e := t.events[nextId].Event
 	t.CurrentTime = t.events[nextId].StartTime
-	t.events = t.events[1:]
+	//fmt.Println("Current time:", t.CurrentTime)
+	// fmt.Println("Number of remaining events:", len(t.events))
+	t.events = append(t.events[:nextId], t.events[nextId+1:]...)
+	// fmt.Println("Number of remaining events:", len(t.events))
 	//e.Happen(t)
+
 	if t.eventListeners != nil {
 		for _, l := range t.eventListeners[e.GetType()] {
 			l.OnEvent(e, t)

@@ -2,9 +2,7 @@ package common
 
 import (
 	"fmt"
-	rand "math/rand"
 
-	"github.com/ercasta/allsoulsrun/pkg/engine"
 	e "github.com/ercasta/allsoulsrun/pkg/engine"
 	gamecommon "github.com/ercasta/allsoulsrun/pkg/game/common"
 )
@@ -14,8 +12,9 @@ const (
 )
 
 type Damage struct {
-	Damaged engine.EntityID
-	Fight   engine.EntityID
+	Damaged      e.EntityID
+	Damageamount int
+	Fight        e.EntityID
 }
 
 func (d Damage) GetType() e.EffectType {
@@ -28,7 +27,7 @@ func (dl DamageListener) OnApply(ef e.Effecter, es *e.EffectStack) {
 	var g = es.Game
 	var elcomponent, statscomponent e.Componenter
 	d := ef.(Damage)
-	damageAmount := rand.Intn(5) + 1
+	damageAmount := d.Damageamount
 	elcomponent = g.GetComponent(d.Damaged, gamecommon.CharacterEnergyLevels{}.GetComponentType())
 	statscomponent = g.GetComponent(d.Damaged, gamecommon.CharacterStats{}.GetComponentType())
 	el := elcomponent.(gamecommon.CharacterEnergyLevels)

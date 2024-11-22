@@ -13,7 +13,7 @@ func (oar OnFight) scheduleNewAttackToFirstOpponent(attacker e.EntityID, fight e
 	fighcomponent := g.GetComponent(fight, gamecommon.Fight{}.GetComponentType()).(gamecommon.Fight)
 	var opponents = fighcomponent.GetOpponents(attacker)
 	if len(opponents) > 0 {
-		t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight}, t.CurrentTime+2000)
+		t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight, SecondAttack: false}, t.CurrentTime+2000)
 	}
 
 }

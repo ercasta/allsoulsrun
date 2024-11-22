@@ -14,7 +14,7 @@ func NewRun() {
 	newgame.Init()
 	var world = newgame.CreateEntity()
 	worldcomp := game.World{}
-	worldcomp.AddCharacter(game.NewCharacter(&newgame, "Legolas", 1, 0, 100, 10, 20, 5, 10, 100, 50))
+	worldcomp.AddCharacter(game.NewCharacter(&newgame, "SuperHero", 1, 0, 100, 10, 20, 5, 10, 100, 50))
 	newgame.SetComponent(world, worldcomp)
 
 	var fightevent = ev.FightEvent{}
@@ -24,6 +24,7 @@ func NewRun() {
 
 	fight.AddFighter(game.NewCharacter(&newgame, "Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0), game.SIDE_MONSTERS)
 	fight.AddFighter(game.NewCharacter(&newgame, "Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0), game.SIDE_MONSTERS)
+	fight.AddFighter(game.NewCharacter(&newgame, "Slime", 1, 0, 150, 3, 1, 1, 2, 234, 0), game.SIDE_MONSTERS)
 
 	newgame.SetComponent(fightevent.Fight, fight)
 

@@ -9,9 +9,10 @@ const (
 )
 
 type AttackEvent struct {
-	Attacker engine.EntityID
-	Attacked engine.EntityID
-	Fight    engine.EntityID
+	Attacker     engine.EntityID
+	Attacked     engine.EntityID
+	Fight        engine.EntityID
+	SecondAttack bool
 }
 
 func (a AttackEvent) GetType() engine.EventType { return AttackEventId }
