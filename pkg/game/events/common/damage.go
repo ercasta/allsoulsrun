@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	DAMAGE = "Damage"
+	DAMAGE e.EventType = "Damage"
 )
 
 type Damage struct {
@@ -17,16 +17,16 @@ type Damage struct {
 	Fight        e.EntityID
 }
 
-func (d Damage) GetType() e.EffectType {
+func (d Damage) GetType() e.EventType {
 	return DAMAGE
 }
 
 type DamageListener struct{}
 
-func (dl DamageListener) OnApply(ef e.Effecter, es *e.EffectStack) {
-	var g = es.Game
+func (dl DamageListener) On(ev e.Eventer, phase e.EventSequencePhase, t *e.Timeline) {
+	var g = t.Game
 	var elcomponent, statscomponent e.Componenter
-	d := ef.(Damage)
+	d := ev.(Damage)
 	damageAmount := d.Damageamount
 	elcomponent = g.GetComponent(d.Damaged, gamecommon.CharacterEnergyLevels{}.GetComponentType())
 	statscomponent = g.GetComponent(d.Damaged, gamecommon.CharacterStats{}.GetComponentType())
@@ -36,14 +36,7 @@ func (dl DamageListener) OnApply(ef e.Effecter, es *e.EffectStack) {
 	g.SetComponent(d.Damaged, el)
 	fmt.Printf("%s has %d health left after taking %d damage\n", name.Name, el.Health, damageAmount)
 	if el.Health <= 0 {
-		es.StackEffect(&Die{Dead: d.Damaged, Fight: d.Fight})
+		t.StackEvent(&Die{Dead: d.Damaged, Fight: d.Fight})
 	}
 
 }
-
-func (dl DamageListener) OnCancel(ef e.Effecter, es *e.EffectStack) {
-	// Implementation for canceling the effect
-}
-
-func (dl DamageListener) OnStack(ef e.Effecter, es *e.EffectStack) {}
-func (dl DamageListener) OnPop(ef e.Effecter, es *e.EffectStack)   {}

@@ -5,12 +5,11 @@ import "slices"
 type Game struct {
 	componentManager componentManager
 	Timeline         Timeline
-	EffectStack      EffectStack
 	entityID         EntityID
 }
 
 func (g *Game) Init() {
-	g.EffectStack = EffectStack{Game: g}
+	g.componentManager = componentManager{}
 	g.Timeline = Timeline{Game: g}
 }
 
@@ -35,7 +34,7 @@ func (g *Game) GetComponent(entityID EntityID, componentType ComponentType) Comp
 }
 
 func (g *Game) SetComponent(entityID EntityID, component Componenter) {
-	g.componentManager.SetComponent(entityID, component, g.Timeline.CurrentTime)
+	g.componentManager.SetComponent(entityID, component, g.Timeline.CurrentSequence)
 }
 
 func (g *Game) GetHistoryLen() int {

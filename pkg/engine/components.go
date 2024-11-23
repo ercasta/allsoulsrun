@@ -3,10 +3,10 @@ package engine
 type ComponentType string
 
 type ComponentHistory struct {
-	HistoryId uint64
-	Time      GameTime
-	EntityID  EntityID
-	Component Componenter
+	HistoryId     uint64
+	EventSequence GameEventSequence
+	EntityID      EntityID
+	Component     Componenter
 }
 
 type Componenter interface {
@@ -32,7 +32,7 @@ func (cm *componentManager) Done() {
 	<-cm.doneChan
 }
 
-func (ch *componentManager) addComponentHistory(entityID EntityID, component Componenter, time GameTime) {
+func (ch *componentManager) addComponentHistory(entityID EntityID, component Componenter, eventSequence GameEventSequence) {
 	ch.historyId++
 	if ch.history == nil {
 		ch.history = make([]ComponentHistory, 10000)
@@ -40,7 +40,8 @@ func (ch *componentManager) addComponentHistory(entityID EntityID, component Com
 		ch.doneChan = make(chan bool)
 		go SaveComponent(&ch.history, ch.saveChan, ch.doneChan)
 	}
-	ch.saveChan <- ComponentHistory{HistoryId: ch.historyId, Time: time, EntityID: entityID, Component: component}
+
+	ch.saveChan <- ComponentHistory{HistoryId: ch.historyId, EventSequence: eventSequence, EntityID: entityID, Component: component}
 	//ch.history = append(ch.history, ComponentHistory{historyId: ch.historyId, time: time, entityID: entityID, component: component})
 }
 
@@ -61,7 +62,7 @@ func (cm *componentManager) GetComponent(entityID EntityID, componentType Compon
 	return nil
 }
 
-func (cm *componentManager) SetComponent(entityID EntityID, componenter Componenter, time GameTime) {
+func (cm *componentManager) SetComponent(entityID EntityID, componenter Componenter, eventSequence GameEventSequence) {
 	if cm.Components == nil {
 		cm.Components = make(map[EntityID]map[ComponentType]Componenter)
 	}
@@ -69,7 +70,7 @@ func (cm *componentManager) SetComponent(entityID EntityID, componenter Componen
 		cm.Components[entityID] = make(map[ComponentType]Componenter)
 	}
 	cm.Components[entityID][componenter.GetComponentType()] = componenter
-	cm.addComponentHistory(entityID, componenter, time)
+	cm.addComponentHistory(entityID, componenter, eventSequence)
 }
 
 // EntityListener is an interface that defines methods for responding to changes in entities and their components.

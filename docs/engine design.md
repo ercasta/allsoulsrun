@@ -57,21 +57,20 @@ Example:
 - "Explode" is put on the event timeline when a trap is placed.
 
 
-## Effect Stack
-Once an event "happens", it puts an effect on a "resolution stack". This might trigger other effects, that are put on top of the stack. When no other effects are triggered, the effects on the top is "popped" and it applies its effects. Again, this might trigger other effects, which are stacked. This goes on until the stack is empty. Note that stack resolution happens virtually in the exact game time instant.
+## Event Stack
+Once an event "happens", it is puy on a "resolution stack". This might trigger other events, that are put on top of the stack. When no events effects are triggered, the event on the top is "popped" and it happens. Again, this might trigger other events, which are stacked. This goes on until the stack is empty. Note that stack resolution happens virtually in the exact game time instant, but each listener gets its own unique game sequence id; this is needed to correctly track states associated to different events happening.
 
 Example:
-- "Damage" effect is put on stack. This triggers a defensive "magic wall" ability from the opponent, so
+- "Damage" event is put on stack. This triggers a defensive "magic wall" ability from the opponent, so
 - "Magic Wall" event is put on the stack. This ability prevents the damage to be inflicted, so
-- "Damage cancel" effects is put on stack. 
+- "Damage cancel" event is put on stack. 
 
 Then stack is resolved:
-- "Damage cancel" is applied. This flags the "Damage" effect as "canceled".
-- "Magic Wall" applies. Actually, this effect does nothing when applied. Its only reason to exist is to put other effects on the stack, to allow counter-effects
-- "Damage" is canceled; so apply does nothing.
+- "Damage cancel" is applied. This cancels the "Damage" from the stack
+- "Magic Wall" applies. Actually, this event does nothing when applied. Its only reason to exist is to put other events on the stack, to allow counter-effects
 
 
 ## Technical notes: Observer pattern
 
-Event Timeline and Effect Stack are based on the Observer pattern. All changes to these structure is notified to listener: this allows creating new events that trigger in specific conditions
+Event Timeline is based on the Observer pattern. All changes to these structure is notified to listener: this allows creating new events that trigger in specific conditions
 
