@@ -42,7 +42,7 @@ func NewRun() {
 }
 
 func Rungame(c *gin.Context) {
-	NewRun()
+	go NewRun()
 	// var effectstack engine.EffectStack = engine.EffectStack{}
 	// effectstack.StackEffect(&events.AttackEvent{})
 

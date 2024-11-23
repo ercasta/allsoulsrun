@@ -1,8 +1,6 @@
 package common
 
 import (
-	"fmt"
-
 	"github.com/ercasta/allsoulsrun/pkg/engine"
 )
 
@@ -21,14 +19,14 @@ type Fight struct {
 
 func (f Fight) GetComponentType() engine.ComponentType { return FightComponentType }
 
-func (c Fight) PersistAll(ch []engine.ComponentHistory) {
-	for _, component := range ch {
-		if _, ok := (component.Component).(CharacterExperience); ok {
-			// TODO Write all to file
-			fmt.Println("Write Placeholder")
-		}
-	}
-}
+// func (c Fight) PersistAll(ch []engine.ComponentHistory) {
+// 	for _, component := range ch {
+// 		if _, ok := (component.Component).(CharacterExperience); ok {
+// 			// TODO Write all to file
+// 			fmt.Println("Write Placeholder")
+// 		}
+// 	}
+// }
 
 func (f *Fight) AddFighter(fighter engine.EntityID, side Side) {
 	if f.sides == nil {
@@ -51,9 +49,7 @@ func (fight *Fight) IsInFight(fighter engine.EntityID) bool {
 func (f *Fight) GetFighters() []engine.EntityID {
 	var fighters []engine.EntityID
 	for _, side := range f.sides {
-		for _, fighter := range side {
-			fighters = append(fighters, fighter)
-		}
+		fighters = append(fighters, side...)
 	}
 	return fighters
 }

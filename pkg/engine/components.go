@@ -11,7 +11,7 @@ type ComponentHistory struct {
 
 type Componenter interface {
 	GetComponentType() ComponentType
-	PersistAll([]ComponentHistory)
+	// PersistAll([]ComponentHistory)
 }
 
 type ComponentWithIdAndType struct {

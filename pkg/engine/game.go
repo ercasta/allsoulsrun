@@ -58,7 +58,7 @@ func (g *Game) SaveHistory() {
 	for _, t := range types {
 		for _, h := range g.componentManager.history {
 			if h.Component != nil && h.Component.GetComponentType() == t {
-				h.Component.PersistAll(g.componentManager.history)
+				// h.Component.PersistAll(g.componentManager.history)
 				break
 			}
 		}

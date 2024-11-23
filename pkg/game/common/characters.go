@@ -2,7 +2,6 @@ package common
 
 import (
 	"encoding/json"
-	"fmt"
 
 	engine "github.com/ercasta/allsoulsrun/pkg/engine"
 )
@@ -22,14 +21,14 @@ func (c CharacterEnergyLevels) GetComponentType() engine.ComponentType {
 	return CharacterEnergyLevelsType
 }
 
-func (c CharacterEnergyLevels) PersistAll(ch []engine.ComponentHistory) {
-	for _, component := range ch {
-		if value, ok := (component.Component).(CharacterEnergyLevels); ok {
-			// TODO Write all to file
-			fmt.Printf("CharacterEnergyLevels for entity %d: Health %d, Mana %d\n", component.EntityID, value.Health, value.Mana)
-		}
-	}
-}
+// func (c CharacterEnergyLevels) PersistAll(ch []engine.ComponentHistory) {
+// 	for _, component := range ch {
+// 		if value, ok := (component.Component).(CharacterEnergyLevels); ok {
+// 			// TODO Write all to file
+// 			fmt.Printf("CharacterEnergyLevels for entity %d: Health %d, Mana %d\n", component.EntityID, value.Health, value.Mana)
+// 		}
+// 	}
+// }
 
 func GetName(id engine.EntityID, g *engine.Game) string {
 	stats := g.GetComponent(id, CharacterStatsType).(CharacterStats)
@@ -50,14 +49,14 @@ func (c CharacterStats) GetComponentType() engine.ComponentType {
 	return CharacterStatsType
 }
 
-func (c CharacterStats) PersistAll(ch []engine.ComponentHistory) {
-	for _, component := range ch {
-		if value, ok := (component.Component).(CharacterStats); ok {
-			// TODO Write all to file
-			fmt.Printf("CharacterStats for entity %d: Strength %d", component.EntityID, value.Strength)
-		}
-	}
-}
+// func (c CharacterStats) PersistAll(ch []engine.ComponentHistory) {
+// 	for _, component := range ch {
+// 		if value, ok := (component.Component).(CharacterStats); ok {
+// 			// TODO Write all to file
+// 			fmt.Printf("CharacterStats for entity %d: Strength %d", component.EntityID, value.Strength)
+// 		}
+// 	}
+// }
 
 type CharacterExperience struct {
 	Level        int
@@ -69,14 +68,14 @@ func (c CharacterExperience) GetComponentType() engine.ComponentType {
 	return CharacterExperienceType
 }
 
-func (c CharacterExperience) PersistAll(ch []engine.ComponentHistory) {
-	for _, component := range ch {
-		if value, ok := (component.Component).(CharacterExperience); ok {
-			// TODO Write all to file
-			fmt.Printf("CharacterStats for entity %d: Exp %d\n", component.EntityID, value.Exp)
-		}
-	}
-}
+// func (c CharacterExperience) PersistAll(ch []engine.ComponentHistory) {
+// 	for _, component := range ch {
+// 		if value, ok := (component.Component).(CharacterExperience); ok {
+// 			// TODO Write all to file
+// 			fmt.Printf("CharacterStats for entity %d: Exp %d\n", component.EntityID, value.Exp)
+// 		}
+// 	}
+// }
 
 // Test
 func (ce *CharacterExperience) fromData(jsonData string) {
