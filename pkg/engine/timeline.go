@@ -19,7 +19,7 @@ type Timeline struct {
 }
 
 func (t *Timeline) AddEvent(e Eventer, time GameTime) {
-	// TODO: sort events by time
+	// TODO: sort events by time, consider adding unique id
 	t.events = append(t.events, TimedEvent{time, e})
 }
 

@@ -8,6 +8,7 @@ import (
 	gamecommon "github.com/ercasta/allsoulsrun/pkg/game/common"
 	ef "github.com/ercasta/allsoulsrun/pkg/game/effects/common"
 	a "github.com/ercasta/allsoulsrun/pkg/game/events/common"
+	strategies "github.com/ercasta/allsoulsrun/pkg/game/strategies"
 )
 
 type AttackScheduler struct{}
@@ -21,7 +22,8 @@ func (oar AttackScheduler) scheduleNewAttackToFirstOpponent(attacker e.EntityID,
 		waitTime := int(1000 * (20 / stats.Dexterity))
 		newTime := t.CurrentTime + e.GameTime(waitTime)
 		// fmt.Printf("%s will attack at %d milliseconds\n", stats.Name, newTime)
-		t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight, SecondAttack: false}, newTime)
+		opponent := strategies.ChooseHealtiestOpponent(attacker, fight, t)
+		t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponent, Fight: fight, SecondAttack: false}, newTime)
 		if rand.Float64() > 0.9 {
 			t.AddEvent(a.AttackEvent{Attacker: attacker, Attacked: opponents[0], Fight: fight, SecondAttack: true}, newTime)
 		}

@@ -37,6 +37,8 @@ func NewRun() {
 	newgame.EffectStack.AddListener(ef.Damage{}.GetType(), ef.DamageListener{})
 
 	newgame.Run()
+	newgame.Terminate()
+	println("History Length: ", newgame.GetHistoryLen())
 }
 
 func Rungame(c *gin.Context) {

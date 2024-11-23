@@ -3,14 +3,15 @@ package engine
 type ComponentType string
 
 type ComponentHistory struct {
-	historyId uint64
-	time      GameTime
-	entityID  EntityID
-	component Componenter
+	HistoryId uint64
+	Time      GameTime
+	EntityID  EntityID
+	Component Componenter
 }
 
 type Componenter interface {
 	GetComponentType() ComponentType
+	PersistAll([]ComponentHistory)
 }
 
 type ComponentWithIdAndType struct {
@@ -22,14 +23,25 @@ type componentManager struct {
 	Components map[EntityID]map[ComponentType]Componenter
 	history    []ComponentHistory
 	historyId  uint64
+	saveChan   chan ComponentHistory
+	doneChan   chan bool
+}
+
+func (cm *componentManager) Done() {
+	close(cm.saveChan)
+	<-cm.doneChan
 }
 
 func (ch *componentManager) addComponentHistory(entityID EntityID, component Componenter, time GameTime) {
 	ch.historyId++
 	if ch.history == nil {
 		ch.history = make([]ComponentHistory, 10000)
+		ch.saveChan = make(chan ComponentHistory, 1000)
+		ch.doneChan = make(chan bool)
+		go SaveComponent(&ch.history, ch.saveChan, ch.doneChan)
 	}
-	ch.history = append(ch.history, ComponentHistory{historyId: ch.historyId, time: time, entityID: entityID, component: component})
+	ch.saveChan <- ComponentHistory{HistoryId: ch.historyId, Time: time, EntityID: entityID, Component: component}
+	//ch.history = append(ch.history, ComponentHistory{historyId: ch.historyId, time: time, entityID: entityID, component: component})
 }
 
 func ComponentTypeMap() map[string]uint64 {
@@ -58,7 +70,6 @@ func (cm *componentManager) SetComponent(entityID EntityID, componenter Componen
 	}
 	cm.Components[entityID][componenter.GetComponentType()] = componenter
 	cm.addComponentHistory(entityID, componenter, time)
-
 }
 
 // EntityListener is an interface that defines methods for responding to changes in entities and their components.

@@ -1,5 +1,7 @@
 package engine
 
+import "slices"
+
 type Game struct {
 	componentManager componentManager
 	Timeline         Timeline
@@ -10,6 +12,11 @@ type Game struct {
 func (g *Game) Init() {
 	g.EffectStack = EffectStack{Game: g}
 	g.Timeline = Timeline{Game: g}
+}
+
+func (g *Game) Terminate() {
+	g.componentManager.Done()
+	g.SaveHistory()
 }
 
 func (g *Game) Run() {
@@ -29,4 +36,31 @@ func (g *Game) GetComponent(entityID EntityID, componentType ComponentType) Comp
 
 func (g *Game) SetComponent(entityID EntityID, component Componenter) {
 	g.componentManager.SetComponent(entityID, component, g.Timeline.CurrentTime)
+}
+
+func (g *Game) GetHistoryLen() int {
+	count := 0
+	for _, h := range g.componentManager.history {
+		if h != (ComponentHistory{}) {
+			count++
+		}
+	}
+	return count
+}
+
+func (g *Game) SaveHistory() {
+	types := make([]ComponentType, 1000)
+	for _, h := range g.componentManager.history {
+		if h.Component != nil && !slices.Contains(types, h.Component.GetComponentType()) {
+			types = append(types, h.Component.GetComponentType())
+		}
+	}
+	for _, t := range types {
+		for _, h := range g.componentManager.history {
+			if h.Component != nil && h.Component.GetComponentType() == t {
+				h.Component.PersistAll(g.componentManager.history)
+				break
+			}
+		}
+	}
 }
