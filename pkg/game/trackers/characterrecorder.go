@@ -1,4 +1,4 @@
-package analyzers
+package trackers
 
 import (
 	e "github.com/ercasta/allsoulsrun/pkg/engine"
@@ -20,8 +20,16 @@ var Schema = `
     "name": "charactername",
     "namespace": "com.github.ercasta.allsoulsrun.common",
     "fields" : [
-        {"name": "seq", "type": "long"},
-        {"name": "id", "type": "long"},
+        {"name": "seq", "type": {
+        "name": "myFixedSeq",
+        "type": "fixed",
+        "size": 8
+      }},
+        {"name": "id", "type": {
+        "name": "myFixedId",
+        "type": "fixed",
+        "size": 8
+      }},
 		{"name": "name", "type": "string"}
     ]
 }`

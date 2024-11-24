@@ -26,12 +26,16 @@ func randstring(n int) string {
 	return string(b)
 }
 
-func NewRun() {
+func CreateNewRun() string {
+	return fmt.Sprintf("%d-%s", time.Now().UnixNano()/int64(time.Millisecond), randstring(12))
+}
+
+func NewRun(runId string) {
 
 	var newgame engine.Game = engine.Game{}
 	newgame.Init()
 
-	nonce := fmt.Sprintf("%d - %s", time.Now().UnixNano()/int64(time.Millisecond), randstring(12))
+	nonce := runId
 	newgame.UUID = nonce
 
 	rundataPath := filepath.Join("rundata", nonce)
@@ -83,6 +87,7 @@ func NewRun() {
 }
 
 func Rungame(c *gin.Context) {
-	go NewRun()
-
+	runId := CreateNewRun()
+	go NewRun(runId)
+	c.JSON(200, gin.H{"runId": runId})
 }

@@ -33,9 +33,8 @@ func (rec *AvroRecoder) Init(trackertype engine.TrackerType, schema engine.AvroS
 		fmt.Printf("Error creating file: %v\n", err)
 		return
 	}
-	defer f.Close()
 
-	enc, err := ocf.NewEncoder(string(schema), f, ocf.WithCodec(ocf.Snappy))
+	enc, err := ocf.NewEncoder(string(schema), f)
 	if err != nil {
 		fmt.Printf("Error creating encoder: %v\n", err)
 		return
@@ -46,7 +45,7 @@ func (rec *AvroRecoder) Init(trackertype engine.TrackerType, schema engine.AvroS
 
 func (rec *AvroRecoder) Record(trackertype engine.TrackerType, trackeddata any) {
 	enc := rec.types[trackertype]
-
+	print("Writing to file\n")
 	err := enc.Encode(trackeddata)
 	if err != nil {
 		fmt.Printf("Error encoding data: %v\n", err)
