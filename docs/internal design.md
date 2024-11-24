@@ -5,16 +5,17 @@
 - Use entity - component from E-C-S. Avoid explicit pointers to objects to avoid a big net of objects. Use UUID, and helper functions for retrieving. 
 - Code is mainly in listeners. Listening structure is created mainly at startup time. Listeners have no data. All data is in components
 - Component objects are immutable. Every change produces a copy, that is stored in the component history log. This helps tracking history.
+- Use Trackers to track relevant run data
+- Use Reports to analyzed tracked data
 
 ## Technological principles
 
 - Use Json to exchange data with UI: it's one of the most universal formats; moreover not much data should be exchanged with front end
 - Use Json to manage content
-- Use Arrow for in-memory analytics and data persistence
-- Do not expose Arrow specifics to content creators.
-- Modding must comply with usage of Arrow
-- It should be possibile to swap storage backends for deployment e.g. to cloud, impacting only the engine.
-
+- Future version: use Apache Beam to generate summary reports
+- Summary reports should consist in small amount of data
+- Use plain logging for debugging. To store logs, use any suitable format (es. JSON Objects in Base64, one per line)
+- Individual summary reports can be exposed at different urls
 
 ## References
 

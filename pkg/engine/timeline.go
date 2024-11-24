@@ -14,7 +14,6 @@ type TimedEvent struct {
 }
 
 type TimelineHistory struct {
-	HistoryId          uint64
 	EventSequence      GameEventSequence
 	EventSequencePhase EventSequencePhase
 	Eventer            Eventer
@@ -38,7 +37,13 @@ type Timeline struct {
 	events          []TimedEvent
 	eventStack      []Eventer
 	eventListeners  map[EventType]map[EventSequencePhase][]EventListener
+	eventTrackers   map[EventType]map[EventSequencePhase][]EventTracker
 	Game            *Game
+	recorder        InitializableRecorder
+}
+
+func (t *Timeline) SetRecorder(r InitializableRecorder) {
+	t.recorder = r
 }
 
 func (t *Timeline) ScheduleEvent(e Eventer, time GameTime) {
@@ -56,6 +61,27 @@ func (t *Timeline) AddEventListener(e EventType, p EventSequencePhase, l EventLi
 	}
 	t.eventListeners[e][p] = append(t.eventListeners[e][p], l)
 }
+
+func (t *Timeline) AddTracker(e EventType, p EventSequencePhase, l EventTracker) {
+	if t.eventTrackers == nil {
+		t.eventTrackers = make(map[EventType]map[EventSequencePhase][]EventTracker, 1000)
+	}
+	if t.eventTrackers[e] == nil {
+		t.eventTrackers[e] = make(map[EventSequencePhase][]EventTracker, 1000)
+	}
+	t.eventTrackers[e][p] = append(t.eventTrackers[e][p], l)
+	t.recorder.Init(l.GetType(), l.GetSchema())
+}
+
+// func (t *Timeline) AddAnalyzer(e EventType, p EventSequencePhase, l EventListener) {
+// 	if t.eventListeners == nil {
+// 		t.eventListeners = make(map[EventType]map[EventSequencePhase][]EventListener, 1000)
+// 	}
+// 	if t.eventListeners[e] == nil {
+// 		t.eventListeners[e] = make(map[EventSequencePhase][]EventListener, 1000)
+// 	}
+// 	t.eventListeners[e][p] = append(t.eventListeners[e][p], l)
+// }
 
 func (t *Timeline) isFinished() bool {
 	return len(t.events) == 0
@@ -78,7 +104,13 @@ func (t *Timeline) callListeners(e Eventer, p EventSequencePhase) {
 	if t.eventListeners != nil && t.eventListeners[e.GetType()] != nil && t.eventListeners[e.GetType()][p] != nil {
 		for _, l := range t.eventListeners[e.GetType()][p] {
 			t.CurrentSequence++
+			// t.saveHistory(e, p)
 			l.On(e, p, t)
+		}
+	}
+	if t.eventTrackers != nil && t.eventTrackers[e.GetType()] != nil && t.eventTrackers[e.GetType()][p] != nil {
+		for _, tracker := range t.eventTrackers[e.GetType()][p] {
+			tracker.Track(t.CurrentSequence, e, p, t.Game, (t.recorder).(Recorder))
 		}
 	}
 }

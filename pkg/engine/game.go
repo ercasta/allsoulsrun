@@ -3,6 +3,7 @@ package engine
 import "slices"
 
 type Game struct {
+	UUID             string
 	componentManager componentManager
 	Timeline         Timeline
 	entityID         EntityID
@@ -22,6 +23,10 @@ func (g *Game) Run() {
 	for !g.Timeline.isFinished() {
 		g.Timeline.RunNextEvent()
 	}
+}
+
+func (g *Game) GetGameUUID() string {
+	return g.UUID
 }
 
 func (g *Game) CreateEntity() EntityID {

@@ -5,10 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// func main() {
-// 	allsouls.Rungame()
-// }
-
 func main() {
 
 	r := gin.Default()
@@ -22,6 +18,6 @@ func main() {
 	// protected.Use(middleware.JwtAuthMiddleware())
 	// protected.GET("/user", controllers.CurrentUser)
 
-	r.Run(":8081")
+	r.Run(":8080")
 
 }
