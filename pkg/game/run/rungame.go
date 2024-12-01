@@ -30,7 +30,7 @@ func CreateNewRun() string {
 	return fmt.Sprintf("%d-%s", time.Now().UnixNano()/int64(time.Millisecond), randstring(12))
 }
 
-func NewRun(runId string) {
+func NewRun(runId string, rules []byte) {
 
 	var newgame engine.Game = engine.Game{}
 	newgame.Init()
@@ -88,6 +88,8 @@ func NewRun(runId string) {
 
 func Rungame(c *gin.Context) {
 	runId := CreateNewRun()
-	go NewRun(runId)
+	rules := c.PostForm("rules")
+	print(rules)
+	go NewRun(runId, []byte(rules))
 	c.JSON(200, gin.H{"runId": runId})
 }

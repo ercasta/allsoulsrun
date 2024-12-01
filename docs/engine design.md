@@ -69,8 +69,21 @@ Then stack is resolved:
 - "Damage cancel" is applied. This cancels the "Damage" from the stack
 - "Magic Wall" applies. Actually, this event does nothing when applied. Its only reason to exist is to put other events on the stack, to allow counter-effects
 
+## Character Build
 
-## Technical notes: Observer pattern
+A character build is composed of:
+- Stats points progression
+- Skill progression
+- Item wishlist
 
-Event Timeline is based on the Observer pattern. All changes to these structure is notified to listener: this allows creating new events that trigger in specific conditions
+## Party
 
+A party is composed of one or more heroes
+
+## Adventures
+
+Runs follow a specific adventure.
+
+An adventure has a series of levels. Each level has a series of encounters. Some levels make you retreat to previous level if you lose (e.g. boss fights)
+
+Each adventure has its own party restrictions (e.g. number of heroes, classes, etc.)

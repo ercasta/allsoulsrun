@@ -20,11 +20,12 @@ type ComponentWithIdAndType struct {
 }
 
 type componentManager struct {
-	Components map[EntityID]map[ComponentType]Componenter
-	history    []ComponentHistory
-	historyId  uint64
-	saveChan   chan ComponentHistory
-	doneChan   chan bool
+	Components       map[EntityID]map[ComponentType]Componenter
+	history          []ComponentHistory
+	ComponentHistory map[EntityID]map[ComponentType]Componenter
+	historyId        uint64
+	saveChan         chan ComponentHistory
+	doneChan         chan bool
 }
 
 func (cm *componentManager) Done() {

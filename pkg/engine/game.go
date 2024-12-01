@@ -1,12 +1,15 @@
 package engine
 
-import "slices"
+import (
+	"slices"
+)
 
 type Game struct {
 	UUID             string
 	componentManager componentManager
 	Timeline         Timeline
 	entityID         EntityID
+	ruleRegistry     RuleRegistry
 }
 
 func (g *Game) Init() {
@@ -67,4 +70,20 @@ func (g *Game) SaveHistory() {
 			}
 		}
 	}
+}
+
+func (g *Game) RegisterRuleSection(section SectionType, rule Rule) {
+	g.ruleRegistry.RegisterRuleSection(section, rule)
+}
+
+func (g *Game) GetRuleSection(section SectionType) Ruler {
+	return g.ruleRegistry.GetRuleSection(section)
+}
+
+func (g *Game) GetOperator(operator OperatorType) Operator {
+	return g.ruleRegistry.GetOperator(operator)
+}
+
+func (g *Game) RegisterOperator(operator OperatorType, op Operator) {
+	g.ruleRegistry.RegisterOperator(operator, op)
 }

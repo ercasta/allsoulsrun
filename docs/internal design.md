@@ -17,6 +17,12 @@
 - Use plain logging for debugging. To store logs, use any suitable format (es. JSON Objects in Base64, one per line)
 - Individual summary reports can be exposed at different urls
 
+
+## Technical notes: Observer pattern
+
+Event Timeline is based on the Observer pattern. All changes to these structure is notified to listener: this allows creating new events that trigger in specific conditions
+
+
 ## References
 
 [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system)
