@@ -1,0 +1,63 @@
+{
+    "name": "Forest Chase",
+    "description": "A chase through the forest",
+    "levels": [
+        {
+            "name": "wood entrance",
+            "retreat_on_loss": false,
+            "next_level": "wood core",
+            "num_encounters": {
+                "min": 2,
+                "max": 3
+            },
+            "encounters": [
+                {
+                    "name": "goblin skirmish",
+                    "monsters": [
+                        {
+                            "enemy": "goblin",
+                            "min": 1,
+                            "max": 2
+                        },
+                        {
+                            "enemy": "orc",
+                            "min": 1,
+                            "max": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "trolls",
+                    "monsters": [
+                        {
+                            "enemy": "troll",
+                            "min": 2,
+                            "max": 3
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "wood core",
+            "retreat_on_loss": true,
+            "encounters": [
+                {
+                    "name": "Goblin Lord",
+                    "monsters": [
+                        {
+                            "enemy": "goblin lord",
+                            "min": 1,
+                            "max": 1
+                        },
+                        {
+                            "enemy": "goblins",
+                            "min": 3,
+                            "max": 5
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

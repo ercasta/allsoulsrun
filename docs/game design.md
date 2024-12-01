@@ -32,3 +32,5 @@ On character creation
 ### Exit Area
 
 ### Start Encounter
+
+

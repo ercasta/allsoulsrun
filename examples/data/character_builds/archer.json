@@ -1,0 +1,51 @@
+{
+    "stats_progression": [
+        {
+            "stat": "str",
+            "times": 1
+        },
+        {
+            "stat": "dex",
+            "times": 3
+        },
+        {
+            "stat": "con",
+            "times": 1
+        },
+        {
+            "stat": "str",
+            "times": 2
+        },
+        {
+            "stat": "dex",
+            "times": 3
+        }
+    ],
+    "skill_progression": [
+        {
+            "skill": "quick shot",
+            "times": 1
+        },
+        {
+            "skill": "pierce",
+            "times": 3
+        }
+    ],
+    "item_wishlist": [
+        {
+            "slot": "right hand",
+            "items": [
+                "deathbringer",
+                "eagle's eye",
+                "falcon's eye"
+            ]
+        },
+     {
+            "slot": "belt",
+            "items": [
+                "forest wrap",
+                "misty string"
+            ]
+        }
+    ]
+}
