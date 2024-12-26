@@ -87,3 +87,7 @@ Runs follow a specific adventure.
 An adventure has a series of levels. Each level has a series of encounters. Some levels make you retreat to previous level if you lose (e.g. boss fights)
 
 Each adventure has its own party restrictions (e.g. number of heroes, classes, etc.)
+
+## Worlds
+
+Adventures take place in worlds. Worlds are simply collections of predefined monsters, locations, items. Adventures can reuse them, but also define new ones.

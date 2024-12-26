@@ -2,11 +2,11 @@ package run
 
 import (
 	"fmt"
+	"log"
 	rand "math/rand"
-	"time"
-
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/ercasta/allsoulsrun/pkg/engine"
 	"github.com/ercasta/allsoulsrun/pkg/engine/utils"
@@ -30,24 +30,46 @@ func CreateNewRun() string {
 	return fmt.Sprintf("%d-%s", time.Now().UnixNano()/int64(time.Millisecond), randstring(12))
 }
 
-func NewRun(runId string, rules []byte) {
-
-	var newgame engine.Game = engine.Game{}
-	newgame.Init()
-
+func configureRun(newgame *engine.Game, runId string, runConfig string) utils.AvroRecoder {
 	nonce := runId
 	newgame.UUID = nonce
 
 	rundataPath := filepath.Join("rundata", nonce)
 	err := os.MkdirAll(rundataPath, os.ModePerm)
 	if err != nil {
-		fmt.Printf("Error creating directory: %v\n", err)
-		return
+		log.Printf("Error creating directory: %v", err)
+		return utils.AvroRecoder{}
 	}
 
+	avroRecoder := utils.AvroRecoder{Basepath: rundataPath}
+	newgame.Timeline.SetRecorder(&avroRecoder)
+	return avroRecoder
+}
+
+func getBaseGame() (*engine.Game, engine.TrackerRegistry) {
+	var newgame engine.Game = engine.Game{}
+	newgame.Init()
+
+	// Whoever wants to mod the game will change listeners and events.
+	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), engine.OnEvent, el.AttackScheduler{})
+	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), engine.After, el.AttackScheduler{})
+	newgame.Timeline.AddEventListener(ev.FightEvent{}.GetType(), engine.OnEvent, el.OnFight{})
+	newgame.Timeline.AddEventListener(ev.Die{}.GetType(), engine.OnEvent, ev.DieListener{})
+	newgame.Timeline.AddEventListener(ev.Damage{}.GetType(), engine.OnEvent, ev.DamageListener{})
+
+	return &newgame, getTrackersMap()
+}
+
+func getTrackersMap() engine.TrackerRegistry {
+	trackersmap := make(map[string]engine.TrackerRegistryEntry)
+	trackersmap["CharacterRecorder"] = engine.TrackerRegistryEntry{EventType: ev.CreateCharacterEvent{}.GetType(), EventTracker: trackers.CharacterRecorder{}, EventSequencePhase: engine.OnEvent}
+	return trackersmap
+}
+
+func runAdventure(newgame *engine.Game, trackerRegistry engine.TrackerRegistry, runConfig string) {
 	var world = newgame.CreateEntity()
 	worldcomp := game.World{}
-	hero := game.NewCharacter(&newgame, "Lufvd", 1, 0, 100, 10, 20, 5, 10, 100, 50)
+	hero := game.NewCharacter(newgame, "Lufvd", 1, 0, 100, 10, 20, 5, 10, 100, 50)
 	newgame.SetComponent(world, worldcomp)
 
 	var fightevent = ev.FightEvent{}
@@ -55,32 +77,29 @@ func NewRun(runId string, rules []byte) {
 	fight := game.Fight{}
 	fight.AddFighter(hero, game.SIDE_CHARACTERS)
 
-	fight.AddFighter(game.NewCharacter(&newgame, "Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0), game.SIDE_MONSTERS)
-	fight.AddFighter(game.NewCharacter(&newgame, "Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0), game.SIDE_MONSTERS)
-	fight.AddFighter(game.NewCharacter(&newgame, "Slime", 1, 0, 150, 3, 1, 1, 2, 234, 0), game.SIDE_MONSTERS)
+	fight.AddFighter(game.NewCharacter(newgame, "Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0), game.SIDE_MONSTERS)
+	fight.AddFighter(game.NewCharacter(newgame, "Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0), game.SIDE_MONSTERS)
+	fight.AddFighter(game.NewCharacter(newgame, "Slime", 1, 0, 150, 3, 1, 1, 2, 234, 0), game.SIDE_MONSTERS)
 
 	newgame.SetComponent(fightevent.Fight, fight)
 
-	// Whoever wants to mod the game, will need to add new listeners and events.
-
-	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), engine.OnEvent, el.AttackScheduler{})
-	newgame.Timeline.AddEventListener(ev.AttackEvent{}.GetType(), engine.After, el.AttackScheduler{})
-	newgame.Timeline.AddEventListener(fightevent.GetType(), engine.OnEvent, el.OnFight{})
-	newgame.Timeline.AddEventListener(ev.Die{}.GetType(), engine.OnEvent, ev.DieListener{})
-	newgame.Timeline.AddEventListener(ev.Damage{}.GetType(), engine.OnEvent, ev.DamageListener{})
-
-	//newgame.Timeline.AddAnalyzer(ev.Damage{}.GetType(), engine.OnEvent, el.FightAnalyzer{})
-
-	avroRecoder := utils.AvroRecoder{Basepath: rundataPath}
-
-	newgame.Timeline.SetRecorder(&avroRecoder)
-	newgame.Timeline.AddTracker(ev.CreateCharacterEvent{}.GetType(), engine.OnEvent, trackers.CharacterRecorder{})
+	// make dynamic, for all configured trackers in runConfig
+	trackerRegistryEntry := trackerRegistry["CharacterRecorder"]
+	newgame.Timeline.AddTracker(trackerRegistryEntry.EventType, trackerRegistryEntry.EventSequencePhase, trackerRegistryEntry.EventTracker)
 
 	newgame.Timeline.ScheduleEvent(ev.CreateCharacterEvent{World: world, CharacterID: hero}, 0)
 	newgame.Timeline.ScheduleEvent(fightevent, 1)
 
 	newgame.Run()
 	newgame.Terminate()
+}
+
+func NewRun(runId string, runConfig string) {
+
+	newgame, trackerRegistry := getBaseGame()
+	avroRecoder := configureRun(newgame, runId, runConfig)
+
+	runAdventure(newgame, trackerRegistry, runConfig)
 
 	avroRecoder.Close()
 
@@ -88,8 +107,7 @@ func NewRun(runId string, rules []byte) {
 
 func Rungame(c *gin.Context) {
 	runId := CreateNewRun()
-	rules := c.PostForm("rules")
-	print(rules)
-	go NewRun(runId, []byte(rules))
+	runConfig := c.PostForm("runconfig")
+	go NewRun(runId, runConfig)
 	c.JSON(200, gin.H{"runId": runId})
 }
