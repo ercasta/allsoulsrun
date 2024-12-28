@@ -13,8 +13,10 @@ const CharacterStatsType engine.ComponentType = "CharacterStats"
 const CharacterEnergyLevelsType engine.ComponentType = "CharacterEnergyLevels"
 
 type CharacterEnergyLevels struct {
-	Health int
-	Mana   int
+	Health    int
+	Mana      int
+	MaxHealth int
+	MaxMana   int
 }
 
 func (c CharacterEnergyLevels) GetComponentType() engine.ComponentType {
@@ -102,8 +104,10 @@ func NewCharacter(g *engine.Game, name string, level, exp, nextLevelExp, strengt
 	})
 
 	g.SetComponent(id, CharacterEnergyLevels{
-		Health: health,
-		Mana:   mana,
+		Health:    health,
+		Mana:      mana,
+		MaxHealth: health,
+		MaxMana:   mana,
 	})
 
 	return id

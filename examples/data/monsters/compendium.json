@@ -1,0 +1,4 @@
+{
+    "Goblin" : {"Name": "Goblin", "Strength":5, "Dexterity":5, "Intelligence":5, "Constitution":5, "Health": 15, "Mana":0},
+    "Orc": {"Name": "Orc", "Strength":15, "Dexterity":10, "Intelligence":10, "Constitution":10, "Health": 20, "Mana":0}
+}
