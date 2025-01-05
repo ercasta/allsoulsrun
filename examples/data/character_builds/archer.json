@@ -30,22 +30,5 @@
             "skill": "pierce",
             "times": 3
         }
-    ],
-    "item_wishlist": [
-        {
-            "slot": "right hand",
-            "items": [
-                "deathbringer",
-                "eagle's eye",
-                "falcon's eye"
-            ]
-        },
-     {
-            "slot": "belt",
-            "items": [
-                "forest wrap",
-                "misty string"
-            ]
-        }
     ]
 }

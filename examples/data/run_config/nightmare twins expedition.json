@@ -1,0 +1,12 @@
+{
+    "party":"nightmare twins.json",
+    "adventure": "enchanted land.json",
+    "run strategies": [
+        {"acts": [], "area": ["enchanted forest"], "levels": ["lost woods"], "retry":5, "formation": "full attack" },
+        {"area": "death mountain", "runs": 100, "retry": 2, "formation": "full attack" },
+        {"acts": [], "areas": [], "levels": [], "formation": "wait and counter"}    
+    ],
+    "trackers":[
+        "CharacterRecorder"
+    ]
+}

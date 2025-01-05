@@ -1,0 +1,34 @@
+{
+    "party":"nightmare twins.json",
+    "adventure": "forest_chase.json",
+    "trackers":[
+        "CharacterRecorder"
+    ],
+    "strategy": {
+        "default": 
+            [
+                {
+                    "name": "Lufvd",
+                    "active": "piercing shot",
+                    "passive": "shift",
+                    "line": "front"
+                }
+                
+            ],
+        "area:wood core": 
+            [
+                {
+                    "name": "Lufvd",
+                    "active": "cripple",
+                    "passive": "focus",
+                    "line": "back"
+                },
+                {
+                    "name": "Thorvald",
+                    "active": "cripple",
+                    "passive": "brace",
+                    "line": "front"
+                }
+            ]
+    }
+}

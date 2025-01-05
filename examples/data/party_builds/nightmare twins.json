@@ -1,0 +1,96 @@
+{
+    "party": [
+        {
+            "name": "Lufvd",
+            "build": "archer.json"
+        },
+        {
+            "name": "Thorvald",
+            "build": "smith.json"
+        }
+    ],
+    "formations": [
+        {
+            "name": "full attack",
+            "formation": [
+                {
+                    "hero": "Lufvd",
+                    "line": "front",
+                    "active": [
+                        {
+                            "skill": "pierce",
+                            "params": [
+                                {
+                                    "key": "target",
+                                    "value": "strongest"
+                                }
+                            ]
+                        },
+                        "shoot"
+                    ],
+                    "passive": [
+                        "second arrow"
+                    ],
+                    "support": [
+                        "bandage"
+                    ]
+                },
+                {
+                    "hero": "Thorvald",
+                    "line": "front",
+                    "active": [
+                        "smite",
+                        "swing"
+                    ],
+                    "passive": [
+                        "fury"
+                    ],
+                    "support": [
+                        "defend"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "wait and counter",
+            "formation": [
+                {
+                    "hero": "Lufvd",
+                    "line": "back",
+                    "active": [
+                        {
+                            "skill": "dodge and shoot",
+                            "params": [
+                                {
+                                    "key": "target",
+                                    "value": "strongest"
+                                }
+                            ]
+                        },
+                        "shoot"
+                    ],
+                    "passive": [
+                        "second arrow"
+                    ],
+                    "support": [
+                        "bandage"
+                    ]
+                },
+                {
+                    "hero": "Thorvald",
+                    "line": "front",
+                    "active": [
+                        "smite",
+                        "swing"
+                    ],
+                    "passive": [
+                        "fury"
+                    ],
+                    "support": [
+                        "defend"
+                    ]
+                }
+            ]
+        }
+    ]
+}

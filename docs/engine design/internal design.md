@@ -7,6 +7,7 @@
 - Component objects are immutable. Every change produces a copy, that is stored in the component history log. This helps tracking history.
 - Use Trackers to track relevant run data
 - Use Reports to analyzed tracked data
+- Don't put code in components (except getters and setters)
 
 ## Technological principles
 
@@ -16,7 +17,8 @@
 - Summary reports should consist in small amount of data
 - Use plain logging for debugging. To store logs, use any suitable format (es. JSON Objects in Base64, one per line)
 - Individual summary reports can be exposed at different urls
-
+- Use external calibration files to manage balancing
+- Leverage an extensive test suite to test game balance on different runs, using range validation.
 
 ## Technical notes: Observer pattern
 

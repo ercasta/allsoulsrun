@@ -13,6 +13,13 @@
 
 - Each level requires 25% more than previous to level up
 
+### Strategy
+
+Strategy means setting a party configuration, in terms of skills and front / back line configuration.
+
+Besides a default strategy, there can be specific strategies for specific levels or acts
+
+Most Skills are parametric. For example the attack skill has an opponent choosing parameter. Default is strongest, but it can be set to healthiest.
 
 ## Events & Listeners
 
