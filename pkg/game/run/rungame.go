@@ -10,9 +10,11 @@ import (
 
 	"github.com/ercasta/allsoulsrun/pkg/engine"
 	"github.com/ercasta/allsoulsrun/pkg/engine/utils"
+	"github.com/ercasta/allsoulsrun/pkg/game/common"
 	game "github.com/ercasta/allsoulsrun/pkg/game/common"
 	ev "github.com/ercasta/allsoulsrun/pkg/game/events/common"
 	el "github.com/ercasta/allsoulsrun/pkg/game/events/listeners"
+	"github.com/ercasta/allsoulsrun/pkg/game/gamemanager"
 	trackers "github.com/ercasta/allsoulsrun/pkg/game/trackers"
 	"github.com/gin-gonic/gin"
 )
@@ -66,20 +68,29 @@ func getTrackersMap() engine.TrackerRegistry {
 	return trackersmap
 }
 
+func addToFight(newgame *engine.Game, fight engine.EntityID, fightpointer *game.Fight, character engine.EntityID, side game.Side) {
+	fightpointer.AddFighter(character, side)
+	newgame.SetComponent(character, common.EntityFight{FightId: fight})
+}
+
 func runAdventure(newgame *engine.Game, trackerRegistry engine.TrackerRegistry, runConfig string) {
+	gamemanager := gamemanager.GameManager{}
+	gamemanager.Init(runConfig, "../../../examples/data")
 	var world = newgame.CreateEntity()
 	worldcomp := game.World{}
+
 	hero := game.NewCharacter(newgame, "Lufvd", 1, 0, 100, 10, 20, 5, 10, 100, 50)
 	newgame.SetComponent(world, worldcomp)
 
 	var fightevent = ev.FightEvent{}
 	fightevent.Fight = newgame.CreateEntity()
 	fight := game.Fight{}
-	fight.AddFighter(hero, game.SIDE_CHARACTERS)
 
-	fight.AddFighter(game.NewCharacter(newgame, "Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0), game.SIDE_MONSTERS)
-	fight.AddFighter(game.NewCharacter(newgame, "Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0), game.SIDE_MONSTERS)
-	fight.AddFighter(game.NewCharacter(newgame, "Slime", 1, 0, 150, 3, 1, 1, 2, 234, 0), game.SIDE_MONSTERS)
+	addToFight(newgame, fightevent.Fight, &fight, hero, game.SIDE_CHARACTERS)
+
+	addToFight(newgame, fightevent.Fight, &fight, game.NewCharacter(newgame, "Goblin", 1, 0, 50, 5, 5, 5, 5, 15, 0), game.SIDE_MONSTERS)
+	addToFight(newgame, fightevent.Fight, &fight, game.NewCharacter(newgame, "Orc", 1, 0, 150, 15, 10, 10, 10, 20, 0), game.SIDE_MONSTERS)
+	addToFight(newgame, fightevent.Fight, &fight, game.NewCharacter(newgame, "Slime", 1, 0, 150, 3, 1, 1, 2, 234, 0), game.SIDE_MONSTERS)
 
 	newgame.SetComponent(fightevent.Fight, fight)
 

@@ -16,12 +16,3 @@ type AttackEvent struct {
 }
 
 func (a AttackEvent) GetType() engine.EventType { return AttackEventId }
-
-func (a AttackEvent) Scheduled(t *engine.Timeline) {}
-
-func (a AttackEvent) Happen(t *engine.Timeline) {
-
-}
-
-func (a AttackEvent) Cancel(t *engine.Timeline) {
-}

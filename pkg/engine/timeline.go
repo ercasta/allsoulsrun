@@ -62,6 +62,19 @@ func (t *Timeline) AddEventListener(e EventType, p EventSequencePhase, l EventLi
 	t.eventListeners[e][p] = append(t.eventListeners[e][p], l)
 }
 
+func (t *Timeline) RemoveEventListener(e EventType, p EventSequencePhase, l EventListener) {
+	if t.eventListeners == nil || t.eventListeners[e] == nil || t.eventListeners[e][p] == nil {
+		return
+	}
+	listeners := t.eventListeners[e][p]
+	for i, listener := range listeners {
+		if listener == l {
+			t.eventListeners[e][p] = append(listeners[:i], listeners[i+1:]...)
+			break
+		}
+	}
+}
+
 func (t *Timeline) AddTracker(e EventType, p EventSequencePhase, l EventTracker) {
 	if t.eventTrackers == nil {
 		t.eventTrackers = make(map[EventType]map[EventSequencePhase][]EventTracker, 1000)

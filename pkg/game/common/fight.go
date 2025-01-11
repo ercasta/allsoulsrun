@@ -7,6 +7,7 @@ import (
 type Side string
 
 const FightComponentType engine.ComponentType = "Fight"
+const EntityFightComponentType engine.ComponentType = "EntityFight"
 
 const (
 	SIDE_CHARACTERS = "Characters"
@@ -16,6 +17,13 @@ const (
 type Fight struct {
 	sides map[Side][]engine.EntityID
 }
+
+// This component is attached / detached to entities as they enter / leave a fight
+type EntityFight struct {
+	FightId engine.EntityID
+}
+
+func (f EntityFight) GetComponentType() engine.ComponentType { return EntityFightComponentType }
 
 func (f Fight) GetComponentType() engine.ComponentType { return FightComponentType }
 
