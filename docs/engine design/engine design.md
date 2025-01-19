@@ -1,44 +1,5 @@
 # Game Design
 
-## Characters and Stats
-
-All characters have stats, e.g.:
-
-- Strength
-- Dexterity
-- Intelligence
-- Constitution
-
-These stats are the basis for computing derived stats.
-
-## Items
-
-Items are either Equipment or Consumables
-
-### Equipment
-
-Characters can have equipment. Equipment slots:
-
-- Head
-- Torso
-- Gauntlets
-- Feet
-- Right Hand
-- Left Hand
-- Right Ring
-- Left Ring
-- Neck
-
-Equipment occupies slots, and might have prerequisites. Equipping usually alters stats, and can also activate effects. Equipment is randomly dropped by monsters.
-
-### Consumables
-
-Health and mana potion. Can be drink instantaneously, but have cooldown period.
-
-### Inventory
-
-In first version, inventory is only used for consumables.
-
 ## Game Sequence
 
 Game is continuous in game time. A Character starts in town. He can then teleport to a level. Within the level, there can be several monster fights. Fights can have arbitrary number of participants on each of the two side (characters and monsters). Fights ends when one of there are no more participants in one of the sides. If characters are dead, they go back to town. If they win, they can move to next level fight, or decide to go back to town.
@@ -68,6 +29,7 @@ Example:
 Then stack is resolved:
 - "Damage cancel" is applied. This cancels the "Damage" from the stack
 - "Magic Wall" applies. Actually, this event does nothing when applied. Its only reason to exist is to put other events on the stack, to allow counter-effects
+
 
 ## Character Build
 
